@@ -1,8 +1,8 @@
 const api = {
     async buscaPensamentos () {
         try {
-            const response = await fetch("http://localhost:3000/pensamentos");
-            return await response.json();
+            const response = await axios.get("http://localhost:3000/pensamentos");
+            return await response.data;
         }
         catch {
             alert("Erro ao buscar pensamentos");
@@ -12,14 +12,8 @@ const api = {
 
     async salvarPensamento (pensamento) {
         try {
-            const response = await fetch("http://localhost:3000/pensamentos", {
-                method: "POST",
-                headers: {
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify(pensamento)
-            });
-            return await response.json();
+            const response = await axios.post("http://localhost:3000/pensamentos",pensamento);
+            return await response.data;
         }
         catch {
             alert("Erro ao salvar pensamentos");
@@ -29,8 +23,8 @@ const api = {
 
     async buscaPensamentoPorId (id) {
         try {
-            const response = await fetch(`http://localhost:3000/pensamentos/${id}`);
-            return await response.json();
+            const response = await axios.get(`http://localhost:3000/pensamentos/${id}`);
+            return await response.data;
         }
         catch {
             alert("Erro ao buscar pensamento");
@@ -40,14 +34,8 @@ const api = {
 
     async editarPensamento (pensamento) {
         try {
-            const response = await fetch(`http://localhost:3000/pensamentos/${pensamento.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify(pensamento)
-            });
-            return await response.json();
+            const response = await axios.put(`http://localhost:3000/pensamentos/${pensamento.id}`, pensamento);
+            return await response.data;
         }
         catch {
             alert("Erro ao editar pensamentos");
@@ -56,10 +44,8 @@ const api = {
     },
     async excluirPensamento (id) {
         try {
-            const response = await fetch(`http://localhost:3000/pensamentos/${id}`, {
-                method: "DELETE"
-            });
-            return await response.json();
+            const response = await axios.delete(`http://localhost:3000/pensamentos/${id}`);
+            return await response.data;
         }
         catch {
             alert("Erro ao excluir pensamentos");
