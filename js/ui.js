@@ -9,13 +9,19 @@ const ui = {
         document.querySelector("#pensamento-autoria").value = pensamento.autoria;
     },
 
-    async renderizarPensamentos() {
+    async renderizarPensamentos(pensamentosFiltrados = null) {
         const listaPensamentos = document.querySelector("#lista-pensamentos");
         listaPensamentos.innerHTML = "";
 
         try {
-            const pensamentos = await api.buscaPensamentos();
-            pensamentos.forEach(ui.adicionarPensamentoNaLista);
+            let pensamentosParaRenderizar;
+            if(pensamentosFiltrados){
+                pensamentosParaRenderizar = pensamentosFiltrados
+            } else {
+                pensamentosParaRenderizar = await api.buscaPensamentos();
+            }
+            
+            pensamentosParaRenderizar.forEach(ui.adicionarPensamentoNaLista);
         } catch {
             alert("Erro ao renderizar pensamentos");
         }
@@ -65,6 +71,14 @@ const ui = {
             }
         }
 
+        const botaoFavorito = document.createElement("button");
+        botaoFavorito.classList.add("botao-favorito");
+
+        const iconeFavorito = document.createElement("img");
+        iconeFavorito.src = "./assets/imagens/icone-favorito_outline.png";
+        iconeFavorito.alt = "Icone de favorito"
+        botaoFavorito.appendChild(iconeFavorito);
+
         const iconeExcluir = document.createElement("img");
         iconeExcluir.src = "./assets/imagens/icone-excluir.png";
         iconeExcluir.alt = "Botão de excluir";
@@ -72,6 +86,7 @@ const ui = {
 
         const icones = document.createElement("div");
         icones.classList.add("icones");
+        icones.appendChild(botaoFavorito);
         icones.appendChild(botaoEditar);
         icones.appendChild(botaoExcluir);
 
