@@ -7,6 +7,9 @@ const ui = {
         document.querySelector("#pensamento-id").value = pensamento.id;
         document.querySelector("#pensamento-conteudo").value = pensamento.conteudo;
         document.querySelector("#pensamento-autoria").value = pensamento.autoria;
+        document.querySelector("#pensamento-data").value = pensamento.data.
+        toISOString().split("T")[0];
+        document.querySelector("#form-container").scrollIntoView()
     },
 
     async renderizarPensamentos(pensamentosFiltrados = null) {
@@ -47,6 +50,22 @@ const ui = {
         const pensamentoAutoria = document.createElement("div");
         pensamentoAutoria.textContent = pensamento.autoria;
         pensamentoAutoria.classList.add("pensamento-autoria");
+
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            timezone: "UTC"
+        }
+
+        const pensamentoData = document.createElement("div");
+        const dataFromatada = pensamento.data.toLocaleDateString("pt-BR", options);
+
+        pensamentoData.textContent = dataFromatada;
+        pensamentoData.classList.add("pensamento-data");
+
+        
         
         const botaoEditar = document.createElement("button");
         botaoEditar.classList.add("botao-editar");
@@ -63,8 +82,8 @@ const ui = {
             const confirmar = confirm("O card será excluído, deseja continuar ?")
             if(confirmar) {
                 try {
-                await api.excluirPensamento(pensamento.id);
-                ui.renderizarPensamentos();
+                    await api.excluirPensamento(pensamento.id);
+                    ui.renderizarPensamentos();
                 } catch  {
                     alert("Erro ao excluir pensamento");
                 }
@@ -73,9 +92,19 @@ const ui = {
 
         const botaoFavorito = document.createElement("button");
         botaoFavorito.classList.add("botao-favorito");
+        botaoFavorito.onclick = async () => {
+            try {
+                await api.atualizarFavorito(pensamento.id, !pensamento.favorito);
+                ui.renderizarPensamentos();
+            } catch (error) {
+                alert("Erro ao atualizar pensamento");
+            }
+        }
 
         const iconeFavorito = document.createElement("img");
-        iconeFavorito.src = "./assets/imagens/icone-favorito_outline.png";
+        iconeFavorito.src = pensamento.favorito ? 
+        "./assets/imagens/icone-favorito.png" :
+        "./assets/imagens/icone-favorito_outline.png";
         iconeFavorito.alt = "Icone de favorito"
         botaoFavorito.appendChild(iconeFavorito);
 
@@ -93,6 +122,7 @@ const ui = {
         li.appendChild(iconeAspas);
         li.appendChild(pensamentoConteudo);
         li.appendChild(pensamentoAutoria);
+        li.appendChild(pensamentoData);
         li.appendChild(icones);
         listaPensamentos.appendChild(li);
 

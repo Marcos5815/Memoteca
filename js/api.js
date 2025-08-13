@@ -1,8 +1,20 @@
+const converterStringParaData = (dataString) => {
+    const [ano, mes, dia] = dataString.split("-");
+    return new Date(Date.UTC(ano, mes - 1, dia));
+}
+
 const api = {
     async buscaPensamentos () {
         try {
             const response = await axios.get("http://localhost:3000/pensamentos");
-            return await response.data;
+            const pensamentos = await response.data;
+
+            return pensamentos.map(pensamento => {
+                return {
+                    ...pensamento,
+                    data: new Date(pensamento.data)
+                }
+            })
         }
         catch {
             alert("Erro ao buscar pensamentos");
@@ -12,7 +24,11 @@ const api = {
 
     async salvarPensamento (pensamento) {
         try {
-            const response = await axios.post("http://localhost:3000/pensamentos",pensamento);
+            const data = converterStringParaData(pensamento.data);
+            const response = await axios.post("http://localhost:3000/pensamentos",{
+                ...pensamento,
+                data: data.toISOString()
+            });
             return await response.data;
         }
         catch {
@@ -24,7 +40,14 @@ const api = {
     async buscaPensamentoPorId (id) {
         try {
             const response = await axios.get(`http://localhost:3000/pensamentos/${id}`);
-            return await response.data;
+            const pensamento = await response.data;
+
+            return {
+                ...pensamento,
+                data: new Date(pensamento.data)
+
+            }
+            
         }
         catch {
             alert("Erro ao buscar pensamento");
@@ -68,8 +91,20 @@ const api = {
             throw error
         }
         
+    },
+
+    async atualizarFavorito(id, favorito) {
+        try {
+            const response = await axios.patch(`http://localhost:3000/pensamentos/${id}`, {favorito});
+            return response.data;
+        } catch (error) {
+            alert("Erro ao atualizar favorito");
+            throw error;
+        }
     }
     
 }
+
+
 
 export default api;

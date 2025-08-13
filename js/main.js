@@ -19,14 +19,20 @@ async function manipularSubmissaoFormulario(event) {
     event.preventDefault();
     const id = document.querySelector("#pensamento-id").value;    
     const conteudo = document.querySelector("#pensamento-conteudo").value;    
-    const autoria = document.querySelector("#pensamento-autoria").value;  
+    const autoria = document.querySelector("#pensamento-autoria").value; 
+    const data = document.querySelector("#pensamento-data").value; 
+
+    if(!validarData(data)){
+        alert("Não é permitido o cadastro de datas futuras");
+        return
+    }
 
     try {
         if(id) {
-            await api.editarPensamento({id, conteudo, autoria})
+            await api.editarPensamento({id, conteudo, autoria, data})
             ui.renderizarPensamentos()
         } else {
-            await api.salvarPensamento({conteudo, autoria})
+            await api.salvarPensamento({conteudo, autoria, data})
             ui.renderizarPensamentos()
         }
     } catch  {
@@ -53,4 +59,10 @@ async function manipularBusca() {
     } catch (error) {
         alert("Erro ao realizar busca");
     }
+}
+
+function validarData(data) {
+    const dataAtual = new Date();
+    const dataInserida = new Date(data);
+    return dataInserida <= dataAtual
 }
