@@ -60,9 +60,10 @@ const ui = {
         }
 
         const pensamentoData = document.createElement("div");
-        const dataFromatada = pensamento.data.toLocaleDateString("pt-BR", options);
+        const dataFormatada = pensamento.data.toLocaleDateString("pt-BR", options);
+        const dataComRegex = dataFormatada.replace(/^(\w)/, (match) => match.toUpperCase());
 
-        pensamentoData.textContent = dataFromatada;
+        pensamentoData.textContent = dataComRegex;
         pensamentoData.classList.add("pensamento-data");
 
         
